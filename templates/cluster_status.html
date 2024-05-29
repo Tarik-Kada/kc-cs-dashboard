@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% from "macros.html" import collapsible_block %}
+
+{% block title %}Cluster Status{% endblock %}
+
+{% block content %}
+<h1>Cluster Status</h1>
+
+{{ collapsible_block('Nodes', nodes_command, 'nodes', nodes_output) }}
+{{ collapsible_block('Pods', pods_command, 'pods', pods_output) }}
+{{ collapsible_block('Services', services_command, 'services', services_output) }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        asyncLoadContent('/get_nodes', 'nodes-output');
+        asyncLoadContent('/get_pods', 'pods-output');
+        asyncLoadContent('/get_services', 'services-output');
+    });
+</script>
+
+{% endblock %}

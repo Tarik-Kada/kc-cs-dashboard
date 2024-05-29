@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Welcome to the Scheduler Dashboard</h1>
+<p>This is the home page.</p>
+
+<h2>Quick start</h2>
+<p>In order to make use of the kubernetes functionalities, make sure your kubernetes context is set to te correct cluster. You can view if this the case using the following command: kubectl config get-contexts</p>
+<div class="collapsible-container">
+    <button class="collapsible-toggle" onclick="toggleCollapsibleContent(this)">
+        <span class="collapsible-title">Code Section</span>
+        <span class="collapsible-icon">&#x276F;</span>
+    </button>
+    <div class="collapsible-content">
+    </div>
+</div>
+{% endblock %}

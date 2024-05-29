@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Scheduler Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</head>
+<body>
+    <div class="sidebar-container collapsed">
+        <div class="sidebar" id="sidebar">
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('controllers') }}">Controllers</a>
+                <a href="{{ url_for('custom_schedulers') }}">Custom Schedulers</a>
+                <a href="{{ url_for('functions') }}">Functions</a>
+                <a href="{{ url_for('cluster_status') }}">Cluster Status</a>
+            </nav>
+        </div>
+        <button class="sidebar-toggle" id="sidebarToggle">&#x276D;</button>
+    </div>
+    <div class="content" id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.0.0/dist/js-yaml.min.js"></script>

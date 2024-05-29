@@ -1,0 +1,55 @@
+{% macro collapsible_block(title, command, output_id, output) %}
+<div class="collapsible-container">
+    <button class="collapsible-toggle" data-id="{{ output_id }}-toggle" onclick="toggleCollapsibleContent(this)">
+        <span class="collapsible-title">{{ title }}</span>
+        <span class="collapsible-icon">&#x276F;</span>
+    </button>
+    <div class="collapsible-content">
+        <div class="code-block">
+            <pre><code>{{ command }}</code></pre>
+        </div>
+        {% if output %}
+        <div class="code-block">
+            <button class="refresh-button" onclick="asyncLoadContent('/get_{{ output_id }}', '{{ output_id }}-output')">Refresh</button>
+            <pre><code id="{{ output_id }}-output">{{ output }}</code></pre>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}
+
+{% macro collapsible_scheduler_block(name, namespace) %}
+<div class="collapsible-container">
+    <button class="collapsible-toggle" data-id="{{ name }}-toggle" onclick="toggleCollapsibleContent(this)">
+        <span class="collapsible-title">{{ name }} ({{ namespace }})</span>
+        <span class="collapsible-icon">&#x276F;</span>
+    </button>
+    <div class="collapsible-content">
+        <div>
+            <button onclick="removeScheduler('{{ name }}', '{{ namespace }}')">Remove</button>
+            <button onclick="fetchLogs('{{ name }}', '{{ namespace }}', '{{ name }}-logs')">Get Logs</button>
+        </div>
+        <div id="{{ name }}-logs" class="code-block">
+            <span class="buffering">Buffering...</span>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro collapsible_editable_block(title, command, element_id, content) %}
+<div class="collapsible-container">
+    <button class="collapsible-toggle" data-id="{{ element_id }}-toggle" onclick="toggleCollapsibleContent(this)">
+        <span class="collapsible-title">{{ title }}</span>
+        <span class="collapsible-icon">&#x276F;</span>
+    </button>
+    <div class="collapsible-content">
+        <div id="{{ element_id }}-output" class="code-block">
+            <pre><code>{{ content }}</code></pre></div>
+        <button onclick="enableEdit('{{ element_id }}')">Edit</button>
+        <div id="{{ element_id }}-editor" style="display:none;">
+            <textarea id="{{ element_id }}-textarea" style="width:100%;height:200px;"></textarea>
+            <button onclick="applyChanges('{{ element_id }}')">Apply Changes</button>
+        </div>
+    </div>
+</div>
+{% endmacro %}

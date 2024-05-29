@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "macros.html" import collapsible_editable_block, collapsible_scheduler_block %}
+
+{% block title %}Custom Schedulers{% endblock %}
+
+{% block content %}
+<h1>Custom Schedulers</h1>
+
+{{ collapsible_editable_block('Scheduler ConfigMap', 'kubectl get configmap scheduler-config -n default -o yaml', 'scheduler_config', scheduler_config_output) }}
+
+<div class="collapsible-container">
+    <button class="collapsible-toggle" data-id="external-schedulers-toggle" onclick="toggleCollapsibleContent(this)">
+        <span class="collapsible-title">Scheduling Algorithms</span>
+        <span class="collapsible-icon">&#x276F;</span>
+    </button>
+    <div class="collapsible-content">
+        <div class="input-group">
+            <input type="text" id="scheduler-name" placeholder="Enter Scheduler Name">
+            <button onclick="addScheduler()">Add Scheduler</button>
+        </div>
+        <div id="scheduler-list">
+            {% for scheduler in schedulers %}
+                {{ collapsible_scheduler_block(scheduler.name, scheduler.namespace) }}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.0.0/dist/js-yaml.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        asyncLoadContent('/get_scheduler_config', 'scheduler-config-output', saveSchedulerConfig);
+    });
+</script>
+
+{% endblock %}
