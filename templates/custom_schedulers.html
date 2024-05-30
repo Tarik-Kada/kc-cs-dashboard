@@ -35,19 +35,19 @@
         <form id="deploy-scheduler-form">
             <div>
                 <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" required placeholder="my-scheduler-algorithm">
             </div>
             <div>
                 <label for="container-name">Container Name:</label>
-                <input type="text" id="container-name" name="container-name" required>
+                <input type="text" id="container-name" name="container-name" required placeholder="my-scheduler-container">
             </div>
             <div>
                 <label for="image">Image:</label>
-                <input type="text" id="image" name="image" required>
+                <input type="text" id="image" name="image" required placeholder="docker.hub/my-repo:latest">
             </div>
             <div>
                 <label for="port">Port:</label>
-                <input type="number" id="port" name="port" required>
+                <input type="number" id="port" name="port" required placeholder="5000">
             </div>
             <button type="submit">Deploy</button>
         </form>
