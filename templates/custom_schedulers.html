@@ -26,10 +26,44 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.0.0/dist/js-yaml.min.js"></script>
+<div class="collapsible-container">
+    <button class="collapsible-toggle" data-id="deploy-scheduler-toggle" onclick="toggleCollapsibleContent(this)">
+        <span class="collapsible-title">Deploy New Scheduler</span>
+        <span class="collapsible-icon">&#x276F;</span>
+    </button>
+    <div class="collapsible-content">
+        <form id="deploy-scheduler-form">
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="container-name">Container Name:</label>
+                <input type="text" id="container-name" name="container-name" required>
+            </div>
+            <div>
+                <label for="image">Image:</label>
+                <input type="text" id="image" name="image" required>
+            </div>
+            <div>
+                <label for="port">Port:</label>
+                <input type="number" id="port" name="port" required>
+            </div>
+            <button type="submit">Deploy</button>
+        </form>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        asyncLoadContent('/get_scheduler_config', 'scheduler-config-output', saveSchedulerConfig);
+        initializeCollapsibleBlocks();
+        asyncLoadContent('/get_scheduler_config', 'scheduler_config-output', saveSchedulerConfig);
+        loadSchedulers(); // Load schedulers and fetch logs
+
+        document.getElementById('deploy-scheduler-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            deployScheduler();
+        });
     });
 </script>
 

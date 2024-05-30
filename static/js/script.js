@@ -34,6 +34,19 @@ function initializeCollapsibleBlocks() {
     });
 }
 
+function toggleCollapsibleContent(button) {
+    const content = button.nextElementSibling;
+    const icon = button.querySelector('.collapsible-icon');
+
+    button.classList.toggle('active');
+
+    if (content.style.display === "block") {
+        content.style.display = "none";
+    } else {
+        content.style.display = "block";
+    }
+}
+
 function asyncLoadContent(endpoint, elementId, callback = null) {
     const element = document.getElementById(elementId);
     element.innerHTML = '<span class="buffering">Buffering...</span>';
@@ -178,4 +191,37 @@ function saveSchedulerConfig(config) {
             }
         }
     }
+}
+
+function deployScheduler() {
+    console.log('Deploying scheduler...');
+    const form = document.getElementById('deploy-scheduler-form');
+    const formData = new FormData(form);
+
+    const data = {
+        name: formData.get('name'),
+        containerName: formData.get('container-name'),
+        image: formData.get('image'),
+        port: formData.get('port')
+    };
+
+    fetch('/deploy_scheduler', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'Success') {
+                alert('Scheduler deployed successfully');
+                loadSchedulers(); // Refresh the list of schedulers
+            } else {
+                alert('Failed to deploy scheduler: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Error deploying scheduler: ' + error);
+        });
 }
