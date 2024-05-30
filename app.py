@@ -163,5 +163,71 @@ def apply_changes():
     else:
         return result, 500
 
+@app.route('/deploy_scheduler', methods=['POST'])
+def deploy_scheduler():
+    data = request.get_json()
+    name = data.get('name')
+    container_name = data.get('containerName')
+    image = data.get('image')
+    port = data.get('port')
+
+    if not all([name, container_name, image, port]):
+        return jsonify({'status': 'Failure', 'error': 'Missing required fields'}), 400
+
+    deployment_yaml = f"""
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {name}
+  namespace: default
+  labels:
+    app: {name}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {name}
+  template:
+    metadata:
+      labels:
+        app: {name}
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+      containers:
+      - name: {container_name}
+        image: {image}
+        ports:
+        - containerPort: {port}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {name}
+spec:
+  selector:
+    app: {name}
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: {port}
+"""
+
+    with open('/tmp/deployment.yaml', 'w') as f:
+        f.write(deployment_yaml)
+
+    command = "kubectl apply -f /tmp/deployment.yaml"
+    result = run_kubectl_command(command)
+
+    if "created" in result or "configured" in result:
+        return jsonify({'status': 'Success'})
+    else:
+        return jsonify({'status': 'Failure', 'error': result}), 500
+
+
 if __name__ == '__main__':
     app.run(debug=True)
