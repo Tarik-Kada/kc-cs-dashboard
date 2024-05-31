@@ -9,7 +9,7 @@
 {{ collapsible_editable_block('Scheduler ConfigMap', 'kubectl get configmap scheduler-config -n default -o yaml', 'scheduler_config', scheduler_config_output) }}
 
 <div class="collapsible-container">
-    <button class="collapsible-toggle" data-id="external-schedulers-toggle" onclick="toggleCollapsibleContent(this)">
+    <button class="collapsible-toggle" data-id="external-schedulers-toggle">
         <span class="collapsible-title">Scheduling Algorithms</span>
         <span class="collapsible-icon">&#x276F;</span>
     </button>
@@ -27,7 +27,7 @@
 </div>
 
 <div class="collapsible-container">
-    <button class="collapsible-toggle" data-id="deploy-scheduler-toggle" onclick="toggleCollapsibleContent(this)">
+    <button class="collapsible-toggle" data-id="deploy-scheduler-toggle">
         <span class="collapsible-title">Deploy New Scheduler</span>
         <span class="collapsible-icon">&#x276F;</span>
     </button>

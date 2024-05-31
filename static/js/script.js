@@ -34,20 +34,8 @@ function initializeCollapsibleBlocks() {
     });
 }
 
-function toggleCollapsibleContent(button) {
-    const content = button.nextElementSibling;
-    const icon = button.querySelector('.collapsible-icon');
-
-    button.classList.toggle('active');
-
-    if (content.style.display === "block") {
-        content.style.display = "none";
-    } else {
-        content.style.display = "block";
-    }
-}
-
 function asyncLoadContent(endpoint, elementId, callback = null) {
+    console.log(endpoint, elementId)
     const element = document.getElementById(elementId);
     element.innerHTML = '<span class="buffering">Buffering...</span>';
     fetch(endpoint)
@@ -194,7 +182,6 @@ function saveSchedulerConfig(config) {
 }
 
 function deployScheduler() {
-    console.log('Deploying scheduler...');
     const form = document.getElementById('deploy-scheduler-form');
     const formData = new FormData(form);
 

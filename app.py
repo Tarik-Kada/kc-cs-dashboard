@@ -10,7 +10,11 @@ def get_command(resource):
         'nodes': "kubectl get nodes",
         'pods': "kubectl get pods --all-namespaces",
         'services': "kubectl get svc",
-        'scheduler_config': "kubectl get configmap scheduler-config -n default -o yaml"
+        'scheduler_config': "kubectl get configmap scheduler-config -n default -o yaml",
+        'functions': "kubectl get ksvc",
+        'functions_list': "kubectl get ksvc -o jsonpath='{.items[*].metadata.name}'",
+        'custom_scheduler_controller': "kubectl get pods -n custom-scheduler-controller-system -o jsonpath='{.items[*].metadata.name}'",
+        'controller_availability_logs': "kubectl get pods -n knative-serving -o name | xargs -I {} kubectl logs {} -n knative-serving | grep \'sched\'"
     }
     return command_map.get(resource)
 
@@ -30,10 +34,6 @@ def get_scheduler_log(scheduler_name, scheduler_namespace='default'):
 def index():
     return render_template('index.html', code="kubectl config get-contexts")
 
-@app.route('/controllers')
-def controllers():
-    return render_template('controllers.html')
-
 @app.route('/custom_schedulers')
 def custom_schedulers():
     response = get_scheduler_config()
@@ -52,9 +52,74 @@ def custom_schedulers():
         schedulers=schedulers
     )
 
+@app.route('/get_func_deployments/<func_name>')
+def get_func_deployments(func_name):
+    command = f"kubectl get pod -l serving.knative.dev/service={func_name} -o jsonpath='{{.items[*].metadata.name}}'"
+    output = run_kubectl_command(command)
+    if output:
+        pods = output.strip().split()
+        schedulerNames = [run_kubectl_command(f"kubectl get pod {pod} -o jsonpath='{{.spec.schedulerName}}'") for pod in pods]
+        max_pod_name_length = max(len(pod) for pod in pods) if pods else 0
+        max_scheduler_name_length = max(len(schedulerName) for schedulerName in schedulerNames) if schedulerNames else 0
+        output = f"{'NAME':<{max_pod_name_length}} \t {'(SCHEDULER NAME)':<{max_scheduler_name_length}} \t Total deployments: {len(pods)}\n"
+        for pod, schedulerName in zip(pods, schedulerNames):
+            output += f"{pod:<{max_pod_name_length}} \t ({schedulerName.strip()})\n"
+        return output
+    return f"No deployments found for function: {func_name}"
+
+@app.route('/get_functions_list')
+def get_functions_list():
+    command = get_command('functions_list')
+    if command:
+        output = run_kubectl_command(command)
+        functions = output.strip().split()
+        if output:
+            functions = output.split()
+            return jsonify({'functions': functions})
+    return jsonify({'functions': []})
+
 @app.route('/functions')
 def functions():
-    return render_template('functions.html')
+    functions_command = get_command('functions')
+    functions_output = run_kubectl_command(functions_command)
+
+    functions = get_functions_list().json.get('functions', [])
+    return render_template(
+        'functions.html',
+        functions_command=functions_command,
+        functions_output=functions_output,
+        functions=functions
+    )
+
+@app.route('/controllers')
+def controllers():
+    controllers_command = get_command('custom_scheduler_controller')
+    custom_controller = run_kubectl_command(controllers_command).strip().split()[0]
+
+    custom_logs_command = f"kubectl logs {custom_controller} -n custom-scheduler-controller-system"
+    custom_logs = run_kubectl_command(custom_logs_command)
+
+    controller_availability_logs_command = get_command('controller_availability_logs')
+    controller_availability_logs = run_kubectl_command(controller_availability_logs_command)
+
+    return render_template(
+        'controllers.html',
+        custom_logs_command=custom_logs_command,
+        logs_output=custom_logs,
+        controller_availability_logs_command=controller_availability_logs_command,
+        controller_availability_logs_output=controller_availability_logs)
+
+@app.route('/get_controller_logs/<controller>')
+def get_custom_controller_logs(controller):
+    if controller == 'custom':
+        controllers_command = get_command('custom_scheduler_controller')
+        custom_controller = run_kubectl_command(controllers_command).strip().split()[0]
+        custom_logs_command = f"kubectl logs {custom_controller} -n custom-scheduler-controller-system"
+        return run_kubectl_command(custom_logs_command)
+    elif controller == 'availability':
+        controller_availability_logs_command = get_command('controller_availability_logs')
+        return run_kubectl_command(controller_availability_logs_command)
+    return "Invalid controller query"
 
 @app.route('/cluster_status')
 def cluster_status():
@@ -117,7 +182,6 @@ def get_scheduler_config():
                 formatted_yaml = yaml.dump(config, default_flow_style=False)
                 return jsonify({"output": formatted_yaml, "config": config})
             except Exception as e:
-                print(e)
                 return jsonify({"output": output, "error": str(e)})
     return jsonify({"output": "Error executing command", "config": None})
 
@@ -227,7 +291,6 @@ spec:
         return jsonify({'status': 'Success'})
     else:
         return jsonify({'status': 'Failure', 'error': result}), 500
-
 
 if __name__ == '__main__':
     app.run(debug=True)

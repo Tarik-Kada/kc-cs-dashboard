@@ -1,8 +1,18 @@
 {% extends "base.html" %}
+{% from "macros.html" import collapsible_block %}
 
 {% block title %}Controllers{% endblock %}
 
 {% block content %}
 <h1>Controllers</h1>
-<p>This page will display controllers.</p>
+
+{{ collapsible_block('Custom Scheduler Controller Logs', custom_logs_command, 'controller_logs/custom', logs_output) }}
+{{ collapsible_block('Custom Scheduler Availibility Checks', controller_availability_logs_command, 'controller_logs/vailibility', controller_availability_logs_output) }}
+
 {% endblock %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        asyncLoadContent('/get_controller_logs/custom', 'logs-output');
+    });
+</script>

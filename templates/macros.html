@@ -1,6 +1,6 @@
 {% macro collapsible_block(title, command, output_id, output) %}
 <div class="collapsible-container">
-    <button class="collapsible-toggle" data-id="{{ output_id }}-toggle" onclick="toggleCollapsibleContent(this)">
+    <button class="collapsible-toggle" data-id="{{ output_id }}-toggle">
         <span class="collapsible-title">{{ title }}</span>
         <span class="collapsible-icon">&#x276F;</span>
     </button>
@@ -20,7 +20,7 @@
 
 {% macro collapsible_scheduler_block(name, namespace) %}
 <div class="collapsible-container">
-    <button class="collapsible-toggle" data-id="{{ name }}-toggle" onclick="toggleCollapsibleContent(this)">
+    <button class="collapsible-toggle" data-id="{{ name }}-toggle">
         <span class="collapsible-title">{{ name }} ({{ namespace }})</span>
         <span class="collapsible-icon">&#x276F;</span>
     </button>
@@ -38,7 +38,7 @@
 
 {% macro collapsible_editable_block(title, command, element_id, content) %}
 <div class="collapsible-container">
-    <button class="collapsible-toggle" data-id="{{ element_id }}-toggle" onclick="toggleCollapsibleContent(this)">
+    <button class="collapsible-toggle" data-id="{{ element_id }}-toggle">
         <span class="collapsible-title">{{ title }}</span>
         <span class="collapsible-icon">&#x276F;</span>
     </button>
