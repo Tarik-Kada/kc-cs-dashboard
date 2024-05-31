@@ -35,7 +35,6 @@ function initializeCollapsibleBlocks() {
 }
 
 function asyncLoadContent(endpoint, elementId, callback = null) {
-    console.log(endpoint, elementId)
     const element = document.getElementById(elementId);
     element.innerHTML = '<span class="buffering">Buffering...</span>';
     fetch(endpoint)
