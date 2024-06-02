@@ -18,6 +18,18 @@
 </div>
 {% endmacro %}
 
+{% macro collapsible_text_block(name, text) %}
+<div class="collapsible-container">
+    <button class="collapsible-toggle" data-id="{{ name }}-toggle">
+        <span class="collapsible-title">{{ name }}</span>
+        <span class="collapsible-icon">&#x276F;</span>
+    </button>
+    <div class="collapsible-content" style="padding: 20px;">
+        {{ text | safe }}
+    </div>
+</div>
+{% endmacro %}
+
 {% macro collapsible_scheduler_block(name, namespace) %}
 <div class="collapsible-container">
     <button class="collapsible-toggle" data-id="{{ name }}-toggle">

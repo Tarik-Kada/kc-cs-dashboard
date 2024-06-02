@@ -1,19 +1,113 @@
 {% extends "base.html" %}
+{% from "macros.html" import collapsible_text_block %}
 
 {% block title %}Home{% endblock %}
 
 {% block content %}
 <h1>Welcome to the Scheduler Dashboard</h1>
-<p>This is the home page.</p>
 
-<h2>Quick start</h2>
-<p>In order to make use of the kubernetes functionalities, make sure your kubernetes context is set to te correct cluster. You can view if this the case using the following command: kubectl config get-contexts</p>
-<div class="collapsible-container">
-    <button class="collapsible-toggle" onclick="toggleCollapsibleContent(this)">
-        <span class="collapsible-title">Code Section</span>
-        <span class="collapsible-icon">&#x276F;</span>
-    </button>
-    <div class="collapsible-content">
-    </div>
-</div>
+<!-- Setup -->
+{{ collapsible_text_block('Setup', 
+'
+Before you can start using the dashboard, you need to deploy the custom scheduler controller and the custom schedulers.
+To do this, follow the steps below:
+
+<ol>
+    <li>
+        <p>Deploy your cluster. This can be done using KinD. See <a href="https://github.com/Tarik-Kada/knative-serving">the Knative Serving extention documentation</a> for a quickstart guide</p>
+    </li>
+    <li>
+        <p>After deploying your cluster, make sure your Kubernetes context is set accordingly. This can be done using the following command:</p>
+        <div class="code-block">
+            <code>kubectl config get-contexts</code>
+        </div>
+    </li>
+    <li>
+        <p>Deploy the custom scheduler controller. This can be done using the following <a href="https://github.com/Tarik-Kada/custom-scheduler-controller">the documentation of the custom scheduler controller</a>.</p>
+    </li>
+    <li>
+        <p>Deploy some functions to your cluster. See <a href="https://knative.dev/docs/getting-started/first-service/">the Knative Serving</a> documentation for more information.</p>
+    </li>
+    <li>
+        <p>If you have decided to deploy your cluster locally, you need to expose the cluster to the outside world. This can be done using the following command:</p>
+        <div class="code-block">
+            <code>kubectl port-forward -n kourier-system svc/kourier 8080:80</code>
+        </div>
+        <p>This assumes that you use Kourier as your ingress controller. If you use a different ingress controller, you need to expose the cluster accordingly.</p>
+        <p>Make sure the ingress controller is installed and running.</p>
+        <p>After exposing the cluster, you can create a request to your deployed functions using their respective IP address and port 8080:</p>
+        <div class="code-block">
+            <code>curl -v "http://{function}.{namespace}.{function-url}:8080"</code>
+        </div>
+        <p>Replace the placeholders with the appropriate values. You could also use your browser.</p>
+    </li>
+</ol>
+'
+
+) }}
+
+<!-- Each page -->
+
+{{ collapsible_text_block('Cluster Status',
+'
+The Cluster Status page shows the status of the cluster. This includes the nodes, pods, and services in the cluster.
+
+It contains the following information:
+<ul>
+    <li>Nodes: The nodes in the cluster and their status</li>
+    <li>Pods: The pods in the cluster and their status</li>
+    <li>Services: The services in the cluster and all their information</li>
+</ul>
+
+This can be useful to see the status of new pods that are the result of the autoscaling of the functions. You can also view the cluster-IPs of the deployed functions.
+'
+) }}
+
+{{ collapsible_text_block('Custom Schedulers',
+'
+The Custom Schedulers page shows the custom schedulers that are deployed in the cluster. It also shows the configuration of the scheduler controller.
+
+It contains the following information:
+<ul>
+    <li>Scheduler ConfigMap: The configuration of the scheduler controller</li>
+    <li>Scheduling Algorithms: The custom schedulers that are deployed in the cluster</li>
+    <li>Deploy New Scheduler: A form to deploy a new custom scheduler</li>
+</ul>
+
+This can be useful to see the configuration of the scheduler controller and the custom schedulers that are deployed in the cluster. You can also deploy new custom schedulers using the form.
+'
+) }}
+
+{{ collapsible_text_block('Functions',
+'
+The Functions page shows the functions that are deployed in the cluster. It also shows the deployments of the functions.
+
+It contains the following information:
+<ul>
+    <li>Functions: The functions that are deployed in the cluster</li>
+    <li>Function Deployments: The deployments of the functions</li>
+</ul>
+
+This can be useful to see the functions that are deployed in the cluster and their deployments. You can also see the status of the deployments of the functions.
+Use this page to check whether the external scheduling algorithm is working and to verify the scheduling decisions it is making.
+'
+) }}
+
+{{ collapsible_text_block('Controller Logs',
+'
+The Controller Logs page shows the logs of the custom scheduler controller. It also shows the availability checks of the controller.
+
+It contains the following information:
+<ul>
+    <li>Custom Scheduler Controller Logs: The logs of the custom scheduler controller</li>
+    <li>Custom Scheduler Availibility Checks: The availability checks of the custom scheduler controller</li>
+</ul>
+
+This can be useful to see the logs of the custom scheduler controller and the availability checks of the controller. You can also see the status of the controller.
+This shows what errors are occuring, if any, and what the reason could be for not using the external scheduling algorithm for new scheduling decisions.
+Use this page as a debugging tool to see what is going wrong with the controller.
+'
+) }}
+
+
 {% endblock %}
