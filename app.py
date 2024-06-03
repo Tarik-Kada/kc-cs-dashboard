@@ -14,7 +14,7 @@ def get_command(resource):
         'functions': "kubectl get ksvc",
         'functions_list': "kubectl get ksvc -o jsonpath='{.items[*].metadata.name}'",
         'custom_scheduler_controller': "kubectl get pods -n custom-scheduler-controller-system -o jsonpath='{.items[*].metadata.name}'",
-        'controller_availability_logs': "kubectl get pods -n knative-serving -l app=controller -o name | xargs -I {} sh -c 'kubectl logs {} -n knative-serving | grep \'deploy.go\''"
+        'controller_availability_logs': "kubectl get pods -n knative-serving -l app=controller -o name | xargs -I {} sh -c 'kubectl logs {} -n knative-serving | grep \"deploy.go\"'"
     }
     return command_map.get(resource)
 
