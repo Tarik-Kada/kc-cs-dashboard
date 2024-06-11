@@ -210,8 +210,7 @@ def get_logs():
         command = f"kubectl logs -n {scheduler_namespace} -l app={scheduler_name} --tail=-1"
         if command:
             output = run_kubectl_command(command)
-            if output:
-                return jsonify({"output": output})
+            return jsonify({"output": output})
     return jsonify({"output": "Error executing command"})
 
 def validate_yaml(content):
