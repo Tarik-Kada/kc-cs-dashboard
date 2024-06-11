@@ -60,6 +60,8 @@
         asyncLoadContent('/get_scheduler_config', 'scheduler_config-output', saveSchedulerConfig);
         loadSchedulers(); // Load schedulers and fetch logs
 
+        initializeCollapsibleBlocks();
+
         document.getElementById('deploy-scheduler-form').addEventListener('submit', function(event) {
             event.preventDefault();
             deployScheduler();

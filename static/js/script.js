@@ -128,7 +128,7 @@ function loadSchedulers() {
     schedulers.forEach(scheduler => {
         const schedulerBlock = `
             <div class="collapsible-container">
-                <button class="collapsible-toggle" data-id="${scheduler.name}-toggle" onclick="toggleCollapsibleContent(this)">
+                <button class="collapsible-toggle" data-id="${scheduler.name}-toggle">
                     <span class="collapsible-title">${scheduler.name} (${scheduler.namespace})</span>
                     <span class="collapsible-icon">&#x276F;</span>
                 </button>
